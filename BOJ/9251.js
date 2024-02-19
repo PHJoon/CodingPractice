@@ -1,54 +1,36 @@
-class Node {
-    constructor(val, parent, left, right) {
-        this._parent = parent;
-        this._val = val;
-        this._left = left;
-        this._right = right;
-    }
+const readline = require('readline');
+const fs = require('fs');
 
-    left() {
-        return this._left;
-    }
+const rl = readline.createInterface({
+    input: fs.createReadStream('./예제.txt'),
+    // input: process.stdin,
+    output: process.stdout
+});
 
-    right() {
-        return this._right;
-    }
+const input = [];
 
-    parent() {
-        return this._parent;
-    }
-
-    val() {
-        return this._val;
-    }
-
-    setLeft(l) {
-        this._left = l;
-    }
-
-    setRight(r) {
-        this._right = r;
-    }
-    
-    setParent(p) {
-        this._parent = p;
-    }
-
-    setVal(v) {
-        this._val = v;
-    }
-}
+rl.on('line', function(line) {
+    input.push(line);
+}).on('close', function() {
+    const list = input.map((l) => l.toString().trim());
+    solution(list);
+    process.exit();
+});
 
 function solution(input) {
-    const [n] = input[0];
+    const [seq_1, seq_2] = input;
 
-    const arr = [];
-
-    for (let i = 1; i <= n; i++) {
-        arr.push(new Node(input[0], ".", input[1], input[2]));
+    const dp = Array.from({length: seq_1.length + 1}, () => Array(seq_2.length + 1).fill(0));
+    
+    for (let i = 0; i < seq_1.length; i++) {
+        for (let j = 0; j < seq_2.length; j++) {
+            if (seq_1[i] == seq_2[j]) {
+                dp[i + 1][j + 1] = dp[i][j] + 1;
+            } else {
+                dp[i + 1][j + 1] = Math.max(dp[i][j + 1], dp[i + 1][j]);
+            }
+        }
     }
 
-    
-
-
+    console.log(dp[seq_1.length][seq_2.length]);
 }

@@ -26,10 +26,6 @@ function solution(input) {
 
     for (let i = 1; i < n; i++) {
         for (let j = 0; j <= i; j++) {
-            if (i === 1) {
-                tri[i][j] += tri[0][0];
-                continue;
-            }
             if (j === 0) {
                 tri[i][j] += tri[i - 1][j];
             } else if (j === i) {

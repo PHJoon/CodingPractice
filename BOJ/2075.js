@@ -8,14 +8,6 @@ const rl = readline.createInterface({
   output: process.stdout
 });
 
-const input = [];
-rl.on('line', function(line) {
-  input.push(line.split(' ').map((el) => parseInt(el, 10)));
-}).on('close', function() {
-  solution(input);
-  process.exit();
-});
-
 class Heap {
   constructor() {
     this.heap = [];
@@ -67,52 +59,57 @@ class MinHeap extends Heap {
       this.swap(this.parentIndex(index), index);
       index = this.parentIndex(index);
     }
+  }
 
-    bubbleDown() {
-      let index = 0;
-      while (
-        (this.leftChild(index) && this.leftChild(index) < this.heap[index]) ||
-        (this.rightChild(index) && this.rightChild(index) < this.heap[index])
+  bubbleDown() {
+    let index = 0;
+    while (
+      (this.leftChild(index) && this.leftChild(index) < this.heap[index]) ||
+      (this.rightChild(index) && this.rightChild(index) < this.heap[index])
+    ) {
+      let smallerIndex = this.leftChildIndex(index);
+      if (
+        this.rightChild(index) &&
+        this.rightChild(index) < this.heap[smallerIndex]
       ) {
-        let smallerIndex = this.leftChildIndex(index);
-        if (
-          this.rightChild(index) &&
-          this.rightChild(index) < this.heap[smallerIndex]
-        ) {
-          smallerIndex = this.rightChildIndex(index);
-        }
-
-        this.swap(smallerIndex, index);
-        index = smallerIndex;
+        smallerIndex = this.rightChildIndex(index);
       }
-    }
 
-    add(item) {
-      this.heap.push(item);
-      this.bubbleUp();
+      this.swap(smallerIndex, index);
+      index = smallerIndex;
     }
+  }
 
-    poll() {
-      let item = this.peek();
-      this.heap[0] = this.heap[this.size() - 1];
-      this.heap.pop();
-      this.bubbleDown();
-      return item;
-    }
+  add(item) {
+    this.heap.push(item);
+    this.bubbleUp();
+  }
+
+  poll() {
+    let item = this.peek();
+    this.heap[0] = this.heap[this.size() - 1];
+    this.heap.pop();
+    this.bubbleDown();
+    return item;
   }
 }
 
-function solution(input) {
-  const n = input[0][0];
-  const minHeap = new MinHeap();
 
-  // input[1] ~ input[n];
-  for (let i = 1; i <= n; i++) {
-    for (let j = 0; j < n; j++) {
-      minHeap.add(input[i][j]);
+const minHeap = new MinHeap();
+let n = null;
+
+rl.on('line', function(line) {
+  if (n === null) {
+    n = parseInt(line, 10);
+  } else {
+    line.split(' ').forEach((el) => {
+      minHeap.add(parseInt(el, 10));
       if (minHeap.size() > n) minHeap.poll();
-    }
+    })
+    n--;
   }
-
+  if (n === 0) rl.close();
+}).on('close', function() {
   console.log(minHeap.peek());
-}
+  process.exit();
+});

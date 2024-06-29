@@ -1,0 +1,7 @@
+services:
+  testnode:
+    image: testnode:test
+    container_name: testnode
+    build: .
+    volumes:
+      - ./:/app
